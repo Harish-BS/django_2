@@ -146,3 +146,6 @@ def employee_dept_detail(request,id):
     elif request.method == 'DELETE':
         emp.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+    
+
+##########################################################################################################
