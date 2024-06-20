@@ -20,6 +20,7 @@ from company import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('', views.home),
     path('employee/', views.employee_list),
     path('employee/<int:id>', views.employee_detail),
     path('employee_role/', views.employee_role_list),

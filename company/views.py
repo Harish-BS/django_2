@@ -12,7 +12,20 @@ from .models import employee_role
 from .models import employee_dept
 from .serializers import employee_roleSerializers
 from .serializers import employee_deptSerializers
+from django.core.paginator import Paginator
 
+
+
+def home(request):
+    Employee = employee.objects.all()
+    employee_paginator = Paginator(Employee, 5)
+    page_num = request.GET.get('page')
+    page =  employee_paginator.get_page(page_num)
+    context = {
+        'count': Employee.count(),
+        'page' : page
+    }
+    return render(request, 'site.html',context)
 
 @api_view(['GET','POST'])
 
