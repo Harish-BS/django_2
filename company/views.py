@@ -18,6 +18,7 @@ from .serializers2 import Branch_floorSerializers
 from .serializers2 import Branch_filterSerializers
 from .serializers import LoginSerializer
 from django.core.paginator import Paginator
+from rest_framework.pagination import PageNumberPagination
 from .models2 import Branch
 from .models2 import Branch_employee
 from .models2 import Branch_floor
@@ -39,8 +40,11 @@ def home(request):
 def employee_list(request):
     if request.method == 'GET':
         Employees = employee.objects.all()
-        serializer = employeesSerializers(Employees, many = True)
-        return Response(serializer.data)
+        paginator = PageNumberPagination()
+        paginator.page_size = 5
+        result_page = paginator.paginate_queryset(Employees, request)
+        serializer = employeesSerializers(result_page, many = True)
+        return paginator.get_paginated_response(serializer.data)
     
     if request.method == 'POST':
         serializer = employeesSerializers(data=request.data)
@@ -93,9 +97,12 @@ def employee_detail(request,id):
 def employee_role_list(request):
     if request.method == 'GET':
         Employees_role = employee_role.objects.all()
-        serializer = employee_roleSerializers(Employees_role, many = True)
-        #return JsonResponse({'employees': serializer.data})
-        return Response(serializer.data)
+        paginator = PageNumberPagination()
+        paginator.page_size = 5
+        result_page = paginator.paginate_queryset(Employees_role, request)
+        serializer = employee_roleSerializers(result_page, many = True)
+        return paginator.get_paginated_response(serializer.data)
+        
     
     if request.method == 'POST':
         serializer = employee_roleSerializers(data=request.data)
@@ -137,10 +144,12 @@ def employee_role_detail(request,id):
 
 def employee_dept_list(request):
     if request.method == 'GET':
-        Employees_role = employee_dept.objects.all()
-        serializer = employee_deptSerializers(Employees_role, many = True)
-        #return JsonResponse({'employees': serializer.data})
-        return Response(serializer.data)
+        Employees_dept = employee_dept.objects.all()
+        paginator = PageNumberPagination()
+        paginator.page_size = 5
+        result_page = paginator.paginate_queryset(Employees_dept, request)
+        serializer = employee_deptSerializers(result_page, many = True)
+        return paginator.get_paginated_response(serializer.data)
     
     if request.method == 'POST':
         serializer = employee_deptSerializers(data=request.data)
@@ -216,9 +225,11 @@ def employee_filter(request):
 def Branch_list(request):
     if request.method == 'GET':
         Employees = Branch.objects.all()
-        serializer = BranchSerializers(Employees, many = True)
-        return Response(serializer.data)
-    
+        paginator = PageNumberPagination()
+        paginator.page_size = 5
+        result_page = paginator.paginate_queryset(Employees, request)
+        serializer = BranchSerializers(result_page, many = True)
+        return paginator.get_paginated_response(serializer.data)
     if request.method == 'POST':
         serializer = BranchSerializers(data=request.data)
         if serializer.is_valid():
@@ -265,8 +276,11 @@ def Branch_detail(request,id):
 def Branch_floor_list(request):
     if request.method == 'GET':
         branch = Branch_floor.objects.all()
-        serializer = Branch_floorSerializers(branch,many = True)
-        return Response(serializer.data)
+        paginator = PageNumberPagination()
+        paginator.page_size = 5
+        result_page = paginator.paginate_queryset(branch, request)
+        serializer = Branch_floorSerializers(result_page, many = True)
+        return paginator.get_paginated_response(serializer.data)
     
     elif request.method == 'POST':
         serializer = Branch_floorSerializers(data = request.data)
@@ -307,8 +321,11 @@ def Branch_floor_details(request,id):
 def branch_employee_list(request):
     if request.method == 'GET':
         bran = Branch_employee.objects.all()
-        serializer = Branch_employeeSerializers(bran , many = True)
-        return Response(serializer.data)
+        paginator = PageNumberPagination()
+        paginator.page_size = 5
+        result_page = paginator.paginate_queryset(bran, request)
+        serializer = BranchSerializers(result_page, many = True)
+        return paginator.get_paginated_response(serializer.data)
     elif request.method == 'POST':
         serializer = Branch_employeeSerializers(data = request.data)
         if serializer.is_valid():
@@ -319,6 +336,7 @@ def branch_employee_list(request):
                 "Status_Message": "Message",
                 "Data": serializer.data
             }
+
         return Response(response, status=status.HTTP_200_OK)
 @api_view(['GET','PUT','DELETE'])
 def branch_employee_details(request,id):
@@ -374,6 +392,7 @@ def branch_filter(request):
 
 ###############################################################################################################
 
+    #LOGIN
 
 @api_view(['POST'])
 def login_view(request):
@@ -392,3 +411,6 @@ def login_view(request):
         else:
             return Response({"error": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+################################################################################################################
+
